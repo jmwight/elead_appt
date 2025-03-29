@@ -16,10 +16,11 @@ import os
 # Elead: class to give a logged in ready to use interface with elead
 class Elead:
 
-    def __init__(self, username, password, cookie_path='cookies.txt', cookie_file='cookies/cookies.txt',
-                 cookie_exp_dir='cookies/cookie_exp'):
+    def __init__(self, username, password, cookie_file='cookies/cookies.txt',
+                 cookie_exp_dir='cookies/cookie_exp', headless=True):
 
-        # some constants
+        # some constants used elsewhere. Not sure if this is the correct way to do things? In c
+        # I would use a define statement.
         self.LOGIN_URL = 'https://www.eleadcrm.com/evo2/fresh/login.asp?logout=1&CID=0&USERID=0&SESSIONID='
         self.MAIN_PAGE_URL = 'https://www.eleadcrm.com/evo2/fresh/elead-v45/elead_track/index.aspx'
 
@@ -28,30 +29,28 @@ class Elead:
         self._cookie_file = cookie_file
         self._cookie_exp_dir = cookie_exp_dir
 
-        # # setup browser
-        # # make headless and other speed optimizations
-        # options = webdriver.ChromeOptions()
-        # # options.add_argument('--headless')
-        # options.add_argument('--disable-gpu')
-        # options.add_argument('--disable-dev-shm-usage')
-        # options.add_argument('--no-sandbox')
-        # options.add_argument('--disable-setuid-sandbox')
-        # options.add_argument("--disable-notifications")
-        #
-        # self.driver = webdriver.Chrome(options=options)
-        self.driver = webdriver.Chrome()
+        # add some speed and reliability optimizations TODO: check what these actually do
+        options = webdriver.ChromeOptions()
+        options.add_argument('--disable-gpu')
+        options.add_argument('--disable-dev-shm-usage')
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-setuid-sandbox')
+        options.add_argument("--disable-notifications")
+        if headless:
+            # no graphical browser... faster
+            options.add_argument('--headless')
 
-        #self._get_new_cookies()
+        self.driver = webdriver.Chrome(options=options)
 
-        #for cookie in cookies:
-        #    try:
-        #        driver.add_cookie(cookie)
-        #    except selenium.common.exceptions.InvalidCookieDomainException:
-        #        print('cookie that broke things')
-        #        print(cookie)
-        #        print('\n')
+        # load new cookies if we can't or loaded cookies are expired, get new cookies
+        if self._load_stored_cookies() == False:
+            self._get_new_cookies()
+        elif self._test_logged_in() == False:
+            self._get_new_cookies()
 
-    # get new cookies if the old ones have expired
+        # now everything should be ready to go!
+
+    # _get_new_cookies: get new cookies if the old ones have expired
     def _get_new_cookies(self):
 
         # login main page
@@ -83,7 +82,7 @@ class Elead:
         t_str = datetime.now().strftime('%d/%m/%y, %H:%M:%S') # get current time
 
         file_num = len(os.listdir(self._cookie_exp_dir))
-        with open(f'{self._cookie_exp_dir}/exp{file_num}.txt') as f:
+        with open(f'{self._cookie_exp_dir}/exp{file_num}.txt', 'w') as f:
             f.write(t_str)
 
         needed_cookies = []
@@ -104,7 +103,10 @@ class Elead:
     def _load_stored_cookies(self) -> bool:
         if os.path.isfile(self._cookie_file):
             with open(self._cookie_file, 'rb') as f:
-                cookies = pickle.load(f)
+                try:
+                    cookies = pickle.load(f)
+                except:
+                    return False
             for cookie in cookies:
                 self.driver.add_cookie(cookie)
             return True
@@ -125,6 +127,7 @@ class Elead:
 
         return True
 
+    # get_page: loads given url and waits until locater of given type is present and ready
     def get_page(self, url, type, locator):
         self.driver.get(url)
         try:
