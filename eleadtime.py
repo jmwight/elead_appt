@@ -187,3 +187,16 @@ class Time:
         self.hour -= td.hour
         self.minute -= td.minute
         return self
+
+    def __add__(self, td: TimeDelta):
+        t = td
+        t.hour += td.hour
+        t.minute += td.minute
+        return t
+
+    # dunder method -=
+    def __sub__(self, td: TimeDelta):
+        t = td
+        t.hour -= td.hour
+        t.minute -= td.minute
+        return t

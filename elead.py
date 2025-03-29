@@ -17,7 +17,7 @@ import os
 class Elead:
 
     def __init__(self, username, password, cookie_file='cookies/cookies.txt',
-                 cookie_exp_dir='cookies/cookie_exp', headless=True):
+                 cookie_exp_dir='cookies/cookie_exp', headless=False):
 
         # some constants used elsewhere. Not sure if this is the correct way to do things? In c
         # I would use a define statement.
@@ -29,17 +29,17 @@ class Elead:
         self._cookie_file = cookie_file
         self._cookie_exp_dir = cookie_exp_dir
 
-        # add some speed and reliability optimizations TODO: check what these actually do
         options = webdriver.ChromeOptions()
+        if headless:
+            # no graphical browser... faster
+            options.add_argument('--headless')
+
+        # add some speed and reliability optimizations TODO: check what these actually do
         options.add_argument('--disable-gpu')
         options.add_argument('--disable-dev-shm-usage')
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-setuid-sandbox')
         options.add_argument("--disable-notifications")
-        if headless:
-            # no graphical browser... faster
-            options.add_argument('--headless')
-
         self.driver = webdriver.Chrome(options=options)
 
         # load new cookies if we can't or loaded cookies are expired, get new cookies
@@ -47,6 +47,13 @@ class Elead:
             self._get_new_cookies()
         elif self._test_logged_in() == False:
             self._get_new_cookies()
+
+        # close popup window that pops up
+        WebDriverWait(self.driver, 10).until(EC.number_of_windows_to_be(2))
+        windows = self.driver.window_handles
+        self.driver.switch_to.window(windows[1])
+        self.driver.close()
+        self.driver.switch_to.window(windows[0])
 
         # now everything should be ready to go!
 
@@ -107,6 +114,8 @@ class Elead:
                     cookies = pickle.load(f)
                 except:
                     return False
+            self.get_page(self.LOGIN_URL, 'https://www.eleadcrm.com/evo2/fresh/login.asp?logout=1&CID=0&USERID=0&SESSIONID='
+                          'ID', 'user')
             for cookie in cookies:
                 self.driver.add_cookie(cookie)
             return True
