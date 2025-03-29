@@ -21,12 +21,20 @@ class AppointmentInterface(Elead):
         if st >= et:
             raise ValueError("End time must be after start time")
 
-        appts = list[Appointment]
-        ###TODO: loop for each time interval
+        appts = list[Appointment] # TODO: is that right? double check later. I mean list of type Appointment. I think wrong
+        while st+interval < et:
+            self._set_appts(st, interval, self.date)
+            ##TODO: function that reads appointments in between
+            st += interval
+
         #set appointments
         self._set_appts(st, interval, self.date)
         #check for appointments in between an add to list and add each one into appointment then appointmen list
         # return the result
+
+    # _get_appts_in_interval: gets appointments in between set appointment and returns list of Appointment dataclasses
+    def _get_appts_in_interval(self) -> list[Appointment]: # TODO: check list[Appointment] is correct
+        pass
 
     # _set_appts: set placeholder appointments so that we know time so we can see what is in between
     def _set_appts(self, st: Time, td: TimeDelta, d: date):
