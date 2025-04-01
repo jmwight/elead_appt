@@ -21,8 +21,8 @@ class Elead:
 
         # some constants used elsewhere. Not sure if this is the correct way to do things? In c
         # I would use a define statement.
-        self.LOGIN_URL = 'https://www.eleadcrm.com/evo2/fresh/login.asp?logout=1&CID=0&USERID=0&SESSIONID='
-        self.MAIN_PAGE_URL = 'https://www.eleadcrm.com/evo2/fresh/elead-v45/elead_track/index.aspx'
+        self._LOGIN_URL = 'https://www.eleadcrm.com/evo2/fresh/login.asp?logout=1&CID=0&USERID=0&SESSIONID='
+        self._MAIN_PAGE_URL = 'https://www.eleadcrm.com/evo2/fresh/elead-v45/elead_track/index.aspx'
 
         self._username = username
         self._password = password
@@ -114,8 +114,7 @@ class Elead:
                     cookies = pickle.load(f)
                 except:
                     return False
-            self.get_page(self.LOGIN_URL, 'https://www.eleadcrm.com/evo2/fresh/login.asp?logout=1&CID=0&USERID=0&SESSIONID='
-                          'ID', 'user')
+            self.get_page(self._LOGIN_URL, 'ID', 'user')
             for cookie in cookies:
                 self.driver.add_cookie(cookie)
             return True
@@ -127,14 +126,12 @@ class Elead:
     # _test_cookies: test to see if cookies have expired. Returns true if logged in, false if not
     def _test_logged_in(self) -> bool:
         # main page. If this doesn't load then we know it didn't work
-        try:
-            self.get_page(self.MAIN_PAGE_URL, 'NAME',
-                      'txtQuickSearch')
-        except:
-            if self.driver.current_url == self.LOGIN_URL:
-                return False
-
-        return True
+        self.driver.get(self._MAIN_PAGE_URL)
+        self.driver.implicitly_wait(2)
+        if(self.driver.current_url == self._LOGIN_URL):
+            return False
+        else:
+            return True
 
     # get_page: loads given url and waits until locater of given type is present and ready
     def get_page(self, url, type, locator):
@@ -150,9 +147,6 @@ class Elead:
                 WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, locator)))
             elif type == 'TAG_NAME':
                 WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, locator)))
-            # we got redirected because cookies expired
-            #elif self.driver.current_url == 'https://www.eleadcrm.com/evo2/fresh/login.asp?logout=1&CID=0&USERID=0&SESSIONID=':
-                #self._get_new_cookies()
             else:
                 raise Exception('tag location type not found!')
 
