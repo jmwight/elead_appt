@@ -188,15 +188,18 @@ class Time:
         self.minute -= td.minute
         return self
 
+    # dunder method for add
     def __add__(self, td: TimeDelta):
-        t = td
-        t.hour += td.hour
-        t.minute += td.minute
+        t = Time(self.hour, self.minute, self.am)
+        if self.hour == 12 and self.am == True: # to fix a bug  with large time delta and st at 12am
+            t += TimeDelta(td.hour - 12, td.minute)
+        else:
+            t += td
         return t
 
-    # dunder method -=
+    # dunder method for subtract
     def __sub__(self, td: TimeDelta):
-        t = td
-        t.hour -= td.hour
-        t.minute -= td.minute
+        t = Time(self.hour, self.minute, self.am)
+        t -= td
         return t
+
