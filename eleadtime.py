@@ -53,9 +53,6 @@ class Time:
 
     @hour.setter
     def hour(self, h: int) -> None:
-        if h == 0:
-            self._hour = 12
-            self.am = True
         if h >= 1 and h <= 12:
             self._hour = h
         elif h > 12:
@@ -70,6 +67,12 @@ class Time:
                 self._hour = 12
             else:
                 self._hour = h % 12
+        elif h < 1:
+            if math.floor(h/12) % 2 == -1:
+                self.am = False
+            else:
+                self.am = True
+            self._hour = 12 + h % 12
 
     # minute stuff
     @property
@@ -85,7 +88,7 @@ class Time:
                 h = math.floor(m / 60)
                 self.hour += h
                 m -= h*60
-                self._minute = m # recursive call
+                self.minute = m # recursive call
             else:
                 self._minute = m
         else:
@@ -114,6 +117,12 @@ class Time:
             print("Error: total minutes too great")
         else:
             return self.minute + hour * 60
+
+    def flipAM(self):
+        if self.am == True:
+            self.am = False
+        else:
+            self.am = True
 
     # dunder function <
     def __lt__(self, other): # I want to put 'other: Time' but it isn't letting me for some reason
@@ -178,23 +187,31 @@ class Time:
 
     # dunder method +=
     def __iadd__(self, td: TimeDelta):
+        hour_start = self.hour
         self.hour += td.hour
         self.minute += td.minute
+        # if we flipped to 12 flip the am/pm
+        if hour_start < 12 and self.hour == 12:
+            self.flipAM()
         return self
 
     # dunder method -=
     def __isub__(self, td: TimeDelta):
+        hour_start = self.hour
         self.hour -= td.hour
         self.minute -= td.minute
+        #if hour_start < self.hour and self.hour != 12:
+        #    self.flipAM()
         return self
 
     # dunder method for add
     def __add__(self, td: TimeDelta):
+        # TODO: need to fix this later
         t = Time(self.hour, self.minute, self.am)
-        if self.hour == 12 and self.am == True: # to fix a bug  with large time delta and st at 12am
-            t += TimeDelta(td.hour - 12, td.minute)
-        else:
-            t += td
+        # if self.hour == 12 and self.am == True: # to fix a bug  with large time delta and st at 12am
+        #     t += TimeDelta(td.hour - 12, td.minute)
+        # else:
+        t += td
         return t
 
     # dunder method for subtract
