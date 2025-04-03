@@ -130,5 +130,22 @@ class AppointmentInterface(Elead):
 
     # export_to_tsv: exports to a tab seperated value file for easy printing
     # TODO: finish this later
-    def export_to_tsv(self, appointment_list, file):
-        pass
+    def export_to_tsv(self, appointment_list: list[Appointment], out_file: str):
+        last_start_time = None
+        with open(out_file, 'r') as f:
+            # column headers
+            f.write('Start Time\tDelta\tNew?\tVehicle\tConfirmed?\tSold?\tSalesperson\tPriv Cust?\n')
+            # print a line for each appointment
+            for apt in appointment_list:
+                # only print the time and delta if it's not the same as the last one
+                if apt.start_time != last_start_time:
+                    f.write(str(apt.start_time) + '\t')
+                    f.write(str(apt.delta) + '\t')
+                f.write(str(apt.new) + '\t')
+                f.write(str(apt.vehicle) + '\t')
+                f.write(str(apt.confirmed) + '\t')
+                f.write(str(apt.sold) + '\t')
+                f.write(str(apt.salesperson) + '\t')
+                f.write(str(apt.private_cust) + '\n')
+
+                last_start_time = apt.start_time
