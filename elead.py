@@ -61,11 +61,11 @@ class Elead:
     def _get_new_cookies(self):
 
         # login main page
-        self.get_page('https://www.eleadcrm.com/evo2/fresh/login.asp', 'ID', 'user')
+        self.get_page('https://www.eleadcrm.com/evo2/fresh/login.asp', By.ID, 'user')
         self.driver.find_element(By.XPATH, '//*[@id="btnSingleSignOnSignUp"]').click()  # click button to get to login page
 
         # 2 factor login page with email
-        # get_page(driver, 'https://www.eleadcrm.com/evo2/fresh/login.asp', 'ID', 'okta-signin-username')
+        # get_page(driver, 'https://www.eleadcrm.com/evo2/fresh/login.asp', By.ID, 'okta-signin-username')
         WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.ID, 'okta-signin-username')))
         userNameEl = self.driver.find_element(By.ID, 'okta-signin-username')
         userNameEl.send_keys(self._username)
@@ -114,7 +114,7 @@ class Elead:
                     cookies = pickle.load(f)
                 except:
                     return False
-            self.get_page(self._LOGIN_URL, 'ID', 'user')
+            self.get_page(self._LOGIN_URL, By.ID, 'user')
             for cookie in cookies:
                 self.driver.add_cookie(cookie)
             return True
@@ -134,23 +134,23 @@ class Elead:
             return True
 
     # get_page: loads given url and waits until locater of given type is present and ready
-    def get_page(self, url: str, type: str, locator: str):
+    def get_page(self, url: str, locator_function, locator: str):
         self.driver.get(url)
         try:
-            if type == 'ID':
-                WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.ID, locator)))
-            elif type == 'NAME':
-                WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.NAME, locator)))
-            elif type == 'CLASS_NAME':
-                WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, locator)))
-            elif type == 'XPATH':
-                WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, locator)))
-            elif type == 'TAG_NAME':
-                WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, locator)))
-            else:
-                raise Exception('tag type not found!')
-
-            print('page loaded successfully')
+            WebDriverWait(self.driver, 10).until(EC.present_of_element_locate((locator_function, locator)))
+            # if type == 'ID':
+            #     WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.ID, locator)))
+            # elif type == 'NAME':
+            #     WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.NAME, locator)))
+            # elif type == 'CLASS_NAME':
+            #     WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, locator)))
+            # elif type == 'XPATH':
+            #     WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, locator)))
+            # elif type == 'TAG_NAME':
+            #     WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, locator)))
+            # else:
+            #     raise Exception('tag type not found!')\
+            #print('page loaded successfully')
 
         except TimeoutException:
             print("Webpage is taking too long to load")

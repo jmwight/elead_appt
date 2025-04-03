@@ -6,6 +6,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
 from datetime import date
 from appointment import Appointment
+from datetime import datetime
 import time
 
 class AppointmentInterface(Elead):
@@ -25,21 +26,23 @@ class AppointmentInterface(Elead):
         if st >= et:
             raise ValueError("End time must be after start time")
 
-        appts = []
+        apts = []
+        # go through each interval and add appointment times in for each one
         while st+interval < et:
-            self._set_appts(st, interval, self.date)
-            ##TODO: function that reads appointments in between
+            self._set_appts(st, interval, self.date) # set appointments on interval
+            new_apts = self._get_appts_in_interval(st, interval) # get appointments in between
+            for apt in new_apts:
+                apts.append(apt) # add appointments into list of all appointments
             st += interval
 
-        #set appointments
-        self._set_appts(st, interval, self.date)
-        #check for appointments in between an add to list and add each one into appointment then appointmen list
-        # return the result
+        self._revert_appointments()
+
+        return apts
 
     # _get_appts_in_interval: gets appointments in between set appointment and returns list of Appointment dataclasses
-    def _get_appts_in_interval(self, t: Time) -> list[Appointment]: # TODO: check list[Appointment] is correct
+    def _get_appts_in_interval(self, start_time: Time, delta: TimeDelta) -> list[Appointment]: # TODO: check list[Appointment] is correct
         # get to appointment page
-        self.get_page(self._appointment_url, 'ID', 'AppointmentData')
+        self.get_page(self._appointment_url, By.ID, 'AppointmentData')
 
         apts = []
 
@@ -70,7 +73,7 @@ class AppointmentInterface(Elead):
             else:
                 private_cust = False
 
-            apts.append(Appointment(t, new, vehicle, confirmed, sold, salesperson, private_cust))
+            apts.append(Appointment(start_time, delta, new, vehicle, confirmed, sold, salesperson, private_cust))
             apt_num += 1
             base = f'//tbody[@id="AppointmentData"]/tr[{apt_num}]'
 
@@ -85,7 +88,7 @@ class AppointmentInterface(Elead):
     def _set_appt(self, lead: str, t: Time, d: date):
         am_pm_dict = {True: 'AM', False: 'PM'}
 
-        self.get_page(lead, 'NAME', 'nHrs')
+        self.get_page(lead, By.NAME, 'nHrs')
 
         # set up all parameters
         hour_dropdown = Select(self.driver.find_element(By.NAME, 'nHrs'))
@@ -117,6 +120,13 @@ class AppointmentInterface(Elead):
 
         # click submit button to set appointment
         submit_btn.click()
+
+    # _revert_appointments: sets both appointments to date one year from today at 12pm and 1pm so they don't appear on
+    # the appointment log after we are done
+    def _revert_appointments(self):
+        d_now = datetime.now()
+        d = datetime(d_now.year + 1, d_now.month, d_now.day, d_now.hour, d_now.minute, d_now.second, d_now.microsecond)
+        self._set_appts(Time(12, 0, False), TimeDelta(1, 0), d)
 
     # export_to_tsv: exports to a tab seperated value file for easy printing
     # TODO: finish this later

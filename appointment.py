@@ -1,10 +1,11 @@
 from dataclasses import dataclass
-from eleadtime import Time
+from eleadtime import Time, TimeDelta
 
 # Class that stores eleads appointment
 @dataclass
 class Appointment:
-    when: Time
+    start_time: Time
+    delta: TimeDelta
     new: bool
     vehicle: str
     confirmed: bool
