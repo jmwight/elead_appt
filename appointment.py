@@ -5,7 +5,7 @@ from eleadtime import Time
 @dataclass
 class Appointment:
     when: Time
-    new_or_used: bool
+    new: bool
     vehicle: str
     confirmed: bool
     sold: bool

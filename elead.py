@@ -134,7 +134,7 @@ class Elead:
             return True
 
     # get_page: loads given url and waits until locater of given type is present and ready
-    def get_page(self, url, type, locator):
+    def get_page(self, url: str, type: str, locator: str):
         self.driver.get(url)
         try:
             if type == 'ID':
@@ -148,7 +148,7 @@ class Elead:
             elif type == 'TAG_NAME':
                 WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, locator)))
             else:
-                raise Exception('tag location type not found!')
+                raise Exception('tag type not found!')
 
             print('page loaded successfully')
 
@@ -164,3 +164,13 @@ class Elead:
             return element
         except NoSuchElementException:
             return default
+
+    # element_exists: if given element exists return true, else return False. Throw exception if improper type given
+    #TODO: UPDATE get_page FUNCTION WITH FUNCTION INPUT
+    def element_exists(self, tag_func, locator: str):
+        try:
+            self.driver.find_element(tag_func, locator)
+            return True
+
+        except NoSuchElementException:
+            return False
