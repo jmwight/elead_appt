@@ -138,19 +138,6 @@ class Elead:
         self.driver.get(url)
         try:
             WebDriverWait(self.driver, 10).until(EC.present_of_element_locate((locator_function, locator)))
-            # if type == 'ID':
-            #     WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.ID, locator)))
-            # elif type == 'NAME':
-            #     WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.NAME, locator)))
-            # elif type == 'CLASS_NAME':
-            #     WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, locator)))
-            # elif type == 'XPATH':
-            #     WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, locator)))
-            # elif type == 'TAG_NAME':
-            #     WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, locator)))
-            # else:
-            #     raise Exception('tag type not found!')\
-            #print('page loaded successfully')
 
         except TimeoutException:
             print("Webpage is taking too long to load")

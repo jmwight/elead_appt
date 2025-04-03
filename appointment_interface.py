@@ -11,7 +11,7 @@ import time
 
 class AppointmentInterface(Elead):
 
-    def __init__(self, username, password, lead0_url, lead1_url, date=date.today(), headless=False,
+    def __init__(self, username, password, lead0_url, lead1_url, dummy_appt_name, date=date.today(), headless=False,
                  cookie_file='cookies/cookies.txt', cookie_exp_dir='cookies/cookie_exp'):
 
         super().__init__(username, password, cookie_file, cookie_exp_dir, headless)
@@ -20,7 +20,7 @@ class AppointmentInterface(Elead):
         self.date = date
         self._appointment_url = 'https://www.eleadcrm.com/evo2/fresh/elead-v45/elead_track/Reports/Desklog/' \
                                      'AppointmentsPage.aspx?FMV=1'
-        self._dummy_appt_name = '..................................., ..............................'
+        self._dummy_appt_name = dummy_appt_name
 
     def get_appt_list(self, interval: TimeDelta, st: Time, et: Time) -> list[Appointment]:
         if st >= et:

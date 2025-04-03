@@ -17,8 +17,11 @@ if __name__ == '__main__':
         lead0_url = f.readline()
         lead1_url = f.readline()
 
-    ai = AppointmentInterface(username, password, lead0_url, lead1_url, datetime.today(), False, cookie_file,
-                              cookie_exp_dir)
+    with open('logins/dummy_apt_name.txt', 'r') as f:
+        dummy_appt_name = f.readline()
+
+    ai = AppointmentInterface(username, password, lead0_url, lead1_url, dummy_appt_name, datetime.today(), False,
+                              cookie_file, cookie_exp_dir)
     interval = TimeDelta(0, 30)
     st = Time(9, 15, True)
     et = Time(6, 00, False)

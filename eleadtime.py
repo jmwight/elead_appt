@@ -11,9 +11,6 @@ class TimeDelta:
     def hour(self) -> int:
         return self._hour
 
-    def f(self):
-        pass
-
     @hour.setter
     def hour(self, h: int) -> None:
         if(h >= 0 and h < 24):
