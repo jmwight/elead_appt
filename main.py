@@ -3,6 +3,7 @@ from eleadtime import *
 from appointment_interface import *
 from appointment import *
 from datetime import datetime, timedelta
+import time
 
 
 # Press the green button in the gutter to run the script.
@@ -23,12 +24,18 @@ if __name__ == '__main__':
     today = datetime.today()
     yesterday = today - timedelta(days=1)
 
-    ai = AppointmentInterface(username, password, lead0_url, lead1_url, dummy_appt_name, today, False,
-                              cookie_file, cookie_exp_dir)
+    # measure runtime of browser portion in headless mode vs not headless mode
+    t0 = time.perf_counter()
+    ai = AppointmentInterface(username, password, lead0_url, lead1_url, dummy_appt_name, today, headless=True,
+                              cookie_file=cookie_file, cookie_exp_dir=cookie_exp_dir)
     interval = TimeDelta(0, 30)
     st = Time(8, 45, True)
     et = Time(11, 45, False)
     apts = ai.get_appt_list(interval, st, et)
+
+    # print runtime
+    t1 = time.perf_counter()
+    print(f'Runtime is {t1-t0}seconds')
 
     permitted_salespeople = []
     with open('exclusion-inclusion-lists/included-salespeople.txt') as f:
