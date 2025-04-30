@@ -2,7 +2,7 @@ from appointment import Appointment
 from eleadtime import *
 from appointment_interface import *
 from appointment import *
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 # Press the green button in the gutter to run the script.
@@ -20,12 +20,28 @@ if __name__ == '__main__':
     with open('logins/dummy_apt_name.txt', 'r') as f:
         dummy_appt_name = f.readline()
 
-    ai = AppointmentInterface(username, password, lead0_url, lead1_url, dummy_appt_name, datetime.today(), False,
+    today = datetime.today()
+    yesterday = today - timedelta(days=1)
+
+    ai = AppointmentInterface(username, password, lead0_url, lead1_url, dummy_appt_name, today, False,
                               cookie_file, cookie_exp_dir)
     interval = TimeDelta(0, 30)
-    st = Time(9, 15, True)
-    et = Time(6, 00, False)
+    st = Time(8, 45, True)
+    et = Time(11, 45, False)
     apts = ai.get_appt_list(interval, st, et)
+
+    permitted_salespeople = []
+    with open('exclusion-inclusion-lists/included-salespeople.txt') as f:
+        for line in f.readlines():
+            permitted_salespeople.append(line.strip('\n'))
+
+    bdc_appts = []
     for apt in apts:
+        if apt.salesperson in permitted_salespeople:
+            bdc_appts.append(apt)
+
+    for apt in bdc_appts:
         print(f'Start_time: {apt.start_time}\tdelta: {apt.delta}\tNew?: {apt.new}\tVehicle: {apt.vehicle}\tConfirmed?: {apt.confirmed}\tSold?: {apt.sold}\tSalesman: {apt.salesperson}\tPrivate?: {apt.private_cust}')
 
+    apptspath = 'appts/test0.tsv'
+    ai.export_to_tsv(bdc_appts, apptspath, format=1, adder=TimeDelta(0, 15))
