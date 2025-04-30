@@ -130,17 +130,34 @@ class AppointmentInterface(Elead):
 
     # export_to_tsv: exports to a tab seperated value file for easy printing
     # TODO: finish this later
-    def export_to_tsv(self, appointment_list: list[Appointment], out_file: str):
-        last_start_time = None
-        with open(out_file, 'r') as f:
+    def export_to_tsv(self, appointment_list: list[Appointment], out_file: str, format=0, adder=TimeDelta(0, 0)):
+        with open(out_file, 'w') as f:
             # column headers
-            f.write('Start Time\tDelta\tNew?\tVehicle\tConfirmed?\tSold?\tSalesperson\tPriv Cust?\n')
+            if format == 0:
+                f.write('Start Time\tDelta\tNew?\tVehicle\tConfirmed?\tSold?\tSalesperson\tPriv Cust?\n')
+            elif format == 1:
+                f.write('Time\tNew?\tVehicle\tConfirmed?\tSold?\tSalesperson\tPriv Cust?\n')
             # print a line for each appointment
+            last_start_time = appointment_list[0].start_time - TimeDelta(0, 15) # just to make the first one not equal
             for apt in appointment_list:
                 # only print the time and delta if it's not the same as the last one
                 if apt.start_time != last_start_time:
-                    f.write(str(apt.start_time) + '\t')
-                    f.write(str(apt.delta) + '\t')
+                    # print format of start time and end time (interval)
+                    if format == 0:
+                        f.write(str(apt.start_time) + '\t')
+                        f.write(str(apt.delta) + '\t')
+                    # print the time we think it is for the appointments. I.e. we set interval 30 minutes and do on the
+                    # 15 and 45s then it prints the even hour. Kind of a hack around assumption no one books appointments
+                    # at 15 or 45 only 00 and 30. Just makes it prettier to look at
+                    elif format == 1:
+                        f.write(str(apt.start_time + adder) + '\t')
+                # fill with tabs to align properly and so we don't have to see the same appointment times printed
+                # repetitively
+                else:
+                    if format == 0:
+                        f.write('\t\t')
+                    elif format == 1:
+                        f.write('\t')
                 f.write(str(apt.new) + '\t')
                 f.write(str(apt.vehicle) + '\t')
                 f.write(str(apt.confirmed) + '\t')
