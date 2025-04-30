@@ -33,6 +33,9 @@ class TimeDelta:
         else:
             raise ValueError("Minute diff must be a multiple of 0 or a multiple of 15")
 
+    def __repr__(self) -> str:
+        return f'{self.hour} Hours {self.minute} Minutes'
+
 
 class Time:
 
