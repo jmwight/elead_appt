@@ -29,9 +29,9 @@ class AppointmentInterface(Elead):
 
         apts = []
         # go through each interval and add appointment times in for each one
-        while st+interval < et:
+        while st < et:
             self._set_appts(st, interval, self.date) # set appointments on interval
-            new_apts = self._get_appts_in_interval(st, interval) # get appointments in between
+            new_apts = self._get_appts_in_interval(st+TimeDelta(0, 0), interval) # get appointments in between
             for apt in new_apts:
                 apts.append(apt) # add appointments into list of all appointments
             st += interval
