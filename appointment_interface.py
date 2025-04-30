@@ -8,6 +8,7 @@ from datetime import date
 from appointment import Appointment
 from datetime import datetime
 import time
+import re
 
 class AppointmentInterface(Elead):
 
@@ -56,10 +57,9 @@ class AppointmentInterface(Elead):
         apt_num += 1
         base = f'//tbody[@id="AppointmentData"]/tr[{apt_num}]'
 
-        while self.element_exists(By.XPATH, base):
+
+        while self.element_exists(By.XPATH, base) and self.driver.find_element(By.XPATH, base + '/td[3]').text != self._dummy_appt_name:
             customer = self.driver.find_element(By.XPATH, base + '/td[3]').text
-            if customer == self._dummy_appt_name:
-                break
             if self.driver.find_element(By.XPATH, base + '/td[2]').text == 'N':
                 new = True
             else:
