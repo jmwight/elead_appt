@@ -44,9 +44,19 @@ if __name__ == '__main__':
     t0 = time.perf_counter()
     ai = AppointmentInterface(username, password, lead0_url, lead1_url, dummy_appt_name, today, headless=False,
                               cookie_file=cookie_file, cookie_exp_dir=cookie_exp_dir)
+    
     interval = TimeDelta(0, 30)
+    print('Note: minute 15 or 45 for time\n')
     st = getinputtime('Enter start time: ')
+    while st.minute != 15 or st.minute != 45:
+        print('Minute only 15 or 45\n')
+        getinputtime('Enter start time: ')
+    
     et = getinputtime('Enter end time: ')
+    while et.minute != 15 or st.minute != 45:
+        print('Minute only 15 or 45\n')
+        getinputtime('Enter end time: ')
+    
     apts = ai.get_appt_list(interval, st, et)
 
     # print runtime
