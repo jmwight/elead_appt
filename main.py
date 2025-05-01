@@ -8,8 +8,9 @@ import time
 def getinputtime(prompt: str) -> Time:
     t = input(prompt).strip()
     tele = t.split(':')
+    validmin = [0, 15, 30, 45]
     # keep asking for input if it's entered incorrectly until it's correct
-    while ':' not in t or len(tele) != 2 or not tele[0].isdigit() or not tele[1].isdigit():
+    while ':' not in t or len(tele) != 2 or not tele[0].isdigit() or tele[1] not in validmin:
         print('Error: Invalid input. Format: "H[H]:MM" where H[H] is an hour like 1 or 11 and MM is a minute like 20\n')
         t = input(prompt).strip()
 
