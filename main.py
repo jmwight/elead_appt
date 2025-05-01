@@ -6,13 +6,13 @@ from datetime import datetime, timedelta
 import time
 
 def getinputtime(prompt: str) -> Time:
-    t = input(prompt).strip()
-    tele = t.split(':')
+    ts = input(prompt).strip()
+    tarr = t.split(':')
     validmin = [0, 15, 30, 45]
     # keep asking for input if it's entered incorrectly until it's correct
-    while ':' not in t or len(tele) != 2 or not tele[0].isdigit() or tele[1] not in validmin:
+    while ':' not in ts or len(tarr) != 2 or not tarr[0].isdigit() or tarr[1] not in validmin:
         print('Error: Invalid input. Format: "H[H]:MM" where H[H] is an hour like 1 or 11 and MM is a minute like 20\n')
-        t = input(prompt).strip()
+        ts = input(prompt).strip()
 
     dp = input('AM or PM? ')
     dp = dp.strip().upper()
