@@ -7,12 +7,13 @@ import time
 
 def getinputtime(prompt: str) -> Time:
     ts = input(prompt).strip()
-    tarr = t.split(':')
+    tarr = ts.split(':')
     validmin = [0, 15, 30, 45]
     # keep asking for input if it's entered incorrectly until it's correct
-    while ':' not in ts or len(tarr) != 2 or not tarr[0].isdigit() or tarr[1] not in validmin:
+    while ':' not in ts or len(tarr) != 2 or not tarr[0].isdigit() or not tarr[1].isdigit() or int(tarr[1]) not in validmin:
         print('Error: Invalid input. Format: "H[H]:MM" where H[H] is an hour like 1 or 11 and MM is a minute like 20\n')
         ts = input(prompt).strip()
+        tarr = ts.split(':')
 
     dp = input('AM or PM? ')
     dp = dp.strip().upper()
@@ -21,7 +22,7 @@ def getinputtime(prompt: str) -> Time:
         dp = input('AM or PM? ')
         dp = dp.strip().upper()
 
-    return Time(int(tele[0]), int(tele[1]), True if dp == 'AM' else False)
+    return Time(int(tarr[0]), int(tarr[1]), True if dp == 'AM' else False)
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
@@ -49,12 +50,12 @@ if __name__ == '__main__':
     interval = TimeDelta(0, 30)
     print('Note: minute 15 or 45 for time\n')
     st = getinputtime('Enter start time: ')
-    while st.minute != 15 or st.minute != 45:
+    while not(st.minute == 15 or st.minute == 45):
         print('Minute only 15 or 45\n')
         getinputtime('Enter start time: ')
     
     et = getinputtime('Enter end time: ')
-    while et.minute != 15 or st.minute != 45:
+    while not(et.minute == 15 or et.minute == 45):
         print('Minute only 15 or 45\n')
         getinputtime('Enter end time: ')
     
