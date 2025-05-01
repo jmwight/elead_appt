@@ -8,13 +8,17 @@ import time
 def getinputtime(prompt: str) -> Time:
     t = input(prompt).strip()
     tele = t.split(':')
-    # raise exception if stuff entered is not in the right fromat
-    if ':' not in t or len(tele) != 2 or not tele[0].isdigit() or not tele[1].isdigit():
-        raise Exception('Error: Invalid input. Format: "H[H]:MM" where H[H] is an hour like 1 or 11 and MM is a minute like 20\n')
+    # keep asking for input if it's entered incorrectly until it's correct
+    while ':' not in t or len(tele) != 2 or not tele[0].isdigit() or not tele[1].isdigit():
+        print('Error: Invalid input. Format: "H[H]:MM" where H[H] is an hour like 1 or 11 and MM is a minute like 20\n')
+        t = input(prompt).strip()
+
     dp = input('AM or PM? ')
     dp = dp.strip().upper()
-    if dp != 'AM' and dp != 'PM':
-        raise Exception('Error: Invalid input. Needs to be either AM or PM (upper or lowercase)')
+    while dp != 'AM' and dp != 'PM':
+        print('Error: Invalid input. Enter either AM or PM (upper or lowercase)')
+        dp = input('AM or PM? ')
+        dp = dp.strip().upper()
 
     return Time(int(tele[0]), int(tele[1]), True if dp == 'AM' else False)
 
