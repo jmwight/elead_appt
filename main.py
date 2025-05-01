@@ -44,7 +44,7 @@ if __name__ == '__main__':
 
     # measure runtime of browser portion in headless mode vs not headless mode
     t0 = time.perf_counter()
-    ai = AppointmentInterface(username, password, lead0_url, lead1_url, dummy_appt_name, today, headless=False,
+    ai = AppointmentInterface(username, password, lead0_url, lead1_url, dummy_appt_name, today, headless=True,
                               cookie_file=cookie_file, cookie_exp_dir=cookie_exp_dir)
     
     interval = TimeDelta(0, 30)
