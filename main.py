@@ -5,6 +5,18 @@ from appointment import *
 from datetime import datetime, timedelta
 import time
 
+def getinputtime(prompt: str) -> Time:
+    t = input(prompt).strip()
+    tele = t.split(':')
+    # raise exception if stuff entered is not in the right fromat
+    if ':' not in t or len(tele) != 2 or not tele[0].isdigit() or not tele[1].isdigit():
+        raise Exception('Error: Invalid input. Format: "H[H]:MM" where H[H] is an hour like 1 or 11 and MM is a minute like 20\n')
+    dp = input('AM or PM? ')
+    dp = dp.strip().upper()
+    if dp != 'AM' and dp != 'PM':
+        raise Exception('Error: Invalid input. Needs to be either AM or PM (upper or lowercase)')
+
+    return Time(int(tele[0]), int(tele[1]), True if dp == 'AM' else False)
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
@@ -26,11 +38,11 @@ if __name__ == '__main__':
 
     # measure runtime of browser portion in headless mode vs not headless mode
     t0 = time.perf_counter()
-    ai = AppointmentInterface(username, password, lead0_url, lead1_url, dummy_appt_name, today, headless=True,
+    ai = AppointmentInterface(username, password, lead0_url, lead1_url, dummy_appt_name, today, headless=False,
                               cookie_file=cookie_file, cookie_exp_dir=cookie_exp_dir)
     interval = TimeDelta(0, 30)
-    st = Time(8, 45, True)
-    et = Time(11, 45, False)
+    st = getinputtime('Enter start time: ')
+    et = getinputtime('Enter end time: ')
     apts = ai.get_appt_list(interval, st, et)
 
     # print runtime
@@ -52,3 +64,4 @@ if __name__ == '__main__':
 
     apptspath = 'appts/test0.tsv'
     ai.export_to_tsv(bdc_appts, apptspath, format=1, adder=TimeDelta(0, 15))
+
