@@ -1,4 +1,7 @@
+*.swp
 .idea/
 __pycache__/
 cookies/
 logins/
+appts/
+exclusion-inclusion-lists/
