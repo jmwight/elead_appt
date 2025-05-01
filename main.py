@@ -24,7 +24,6 @@ def getinputtime(prompt: str) -> Time:
 
     return Time(int(tarr[0]), int(tarr[1]), True if dp == 'AM' else False)
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     cookie_file = 'cookies/cookies.txt'
     cookie_exp_dir = 'cookies/cookie_exp'
@@ -40,10 +39,8 @@ if __name__ == '__main__':
         dummy_appt_name = f.readline()
 
     today = datetime.today()
-    yesterday = today - timedelta(days=1)
 
     # measure runtime of browser portion in headless mode vs not headless mode
-    t0 = time.perf_counter()
     ai = AppointmentInterface(username, password, lead0_url, lead1_url, dummy_appt_name, today, headless=True,
                               cookie_file=cookie_file, cookie_exp_dir=cookie_exp_dir)
     
@@ -60,10 +57,6 @@ if __name__ == '__main__':
         getinputtime('Enter end time: ')
     
     apts = ai.get_appt_list(interval, st, et)
-
-    # print runtime
-    t1 = time.perf_counter()
-    print(f'Runtime is {t1-t0}seconds')
 
     permitted_salespeople = []
     with open('exclusion-inclusion-lists/included-salespeople.txt') as f:
