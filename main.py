@@ -41,7 +41,7 @@ if __name__ == '__main__':
     today = datetime.today()
 
     # measure runtime of browser portion in headless mode vs not headless mode
-    ai = AppointmentInterface(username, password, lead0_url, lead1_url, dummy_appt_name, today, headless=True,
+    ai = AppointmentInterface(username, password, lead0_url, lead1_url, dummy_appt_name, today, headless=False,
                               cookie_file=cookie_file, cookie_exp_dir=cookie_exp_dir)
     
     interval = TimeDelta(0, 30)
