@@ -40,6 +40,7 @@ class Elead:
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-setuid-sandbox')
         options.add_argument("--disable-notifications")
+        options.add_argument("--disable-popup-blocking")
         self.driver = webdriver.Chrome(options=options)
 
         # load new cookies if we can't or loaded cookies are expired, get new cookies
@@ -48,12 +49,15 @@ class Elead:
         elif self._test_logged_in() == False:
             self._get_new_cookies()
 
-        # close popup window that pops up
-        WebDriverWait(self.driver, 10).until(EC.number_of_windows_to_be(2))
-        windows = self.driver.window_handles
-        self.driver.switch_to.window(windows[1])
-        self.driver.close()
-        self.driver.switch_to.window(windows[0])
+        # close popup window that pops up if it does
+        try:
+            WebDriverWait(self.driver, 5).until(EC.number_of_windows_to_be(2))
+            windows = self.driver.window_handles
+            self.driver.switch_to.window(windows[1])
+            self.driver.close()
+            self.driver.switch_to.window(windows[0])
+        except:
+            print("No popup to close")
 
         # now everything should be ready to go!
 
