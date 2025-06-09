@@ -48,6 +48,8 @@ class AppointmentInterface(Elead):
         apts = []
 
         # pull all appointments we can in interval
+
+        # get appointment one past first anchor
         apt_num = 1
         base = f'//tbody[@id="AppointmentData"]/tr[{apt_num}]'
         # find first dummy appointment
@@ -57,7 +59,7 @@ class AppointmentInterface(Elead):
         apt_num += 1
         base = f'//tbody[@id="AppointmentData"]/tr[{apt_num}]'
 
-
+        # grab every appointment and collect data until we reach other anchor appointment
         while self.element_exists(By.XPATH, base) and self.driver.find_element(By.XPATH, base + '/td[3]').text != self._dummy_appt_name:
             customer = self.driver.find_element(By.XPATH, base + '/td[3]').text
             if self.driver.find_element(By.XPATH, base + '/td[2]').text == 'N':
